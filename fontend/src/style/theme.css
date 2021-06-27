@@ -3,7 +3,7 @@ body {
     margin:0;
     font-family: "Microsoft YaHei UI Light";
   }
-   
+
   .outer_label {
     position: relative;
     left: 0;
@@ -14,7 +14,11 @@ body {
     /* background: -o-linear-gradient(right, #000099, #2154FA); */ /* Opera 11.1 - 12.0 */
     /* background: -moz-linear-gradient(right, #000099, #2154FA); */ /* Firefox 3.6 - 15 */
     /* background: linear-gradient(to right, #000099 , #2154FA); */  /* 标准的语法 */
-    background: linear-gradient(to right, #000099 , #2154FA);
+    /*background: linear-gradient(to right, #000099 , #2154FA);*/
+    /*background-color: #3d4344;*/
+    /*background-color: #6298EA;*/
+    /*background-color: #4D87E0;*/
+    background-color: #0090FD;
     text-align: center;
     filter: brightness(1.4);
   }

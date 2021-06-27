@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.category.Mapper.UnMapper">
+    <select id="queryUnList" resultType="Uncate">
+        select * from tb_un
+    </select>
+
+    <!--通过id检索-->
+    <select id="getUnById" resultType="Uncate">
+        select * from tb_un where id=#{id}
+    </select>
+
+    <!--取值-->
+    <select id="getUnTree" resultMap="unTree">
+        select * from tb_un where parent=#{unnum}
+    </select>
+
+    <!--<select id="getGpcTre" resultMap="gpcTree">-->
+        <!--select * from tb_gpc where gpcnum=#{gpcnum}-->
+    <!--</select>-->
+
+    <!--模糊查询-->
+    <select id="selectUn" resultMap="unTree">
+        select * from tb_un where 1=1 and unnum like "%"#{unnum}"%"
+    </select>
+
+    <!--更新-->
+    <update id="updateUn" parameterType="Uncate">
+        update tb_un set unname=#{unname},unnum=#{unnum},unlevel=#{unlevel},parent=#{parent} where id=#{id}
+    </update>
+
+    <!--删除-->
+    <update id="deleteUn" parameterType="Integer">
+        update tb_un set deleted='1' where id=${id}
+    </update>
+
+    <!--添加-->
+    <insert id="addUn" >
+        insert into tb_un(unname,unnum,parent,unlevel) values (#{unname},#{unnum},#{parent},#{unlevel})
+    </insert>
+
+    <resultMap id="unTree" type="com.example.category.Bean.Uncate">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="unnum" property="unnum" jdbcType="VARCHAR" />
+        <result column="unname" property="unname" jdbcType="VARCHAR" />
+        <result column="unlevel" property="unlevel" jdbcType="INTEGER" />
+        <result column="parent" property="parent" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="INTEGER" />
+        <!--id作为参数递归调用getDeptTree，查询子节点-->
+        <collection property="children" column="unnum" select="getUnTree" ofType="com.example.category.Bean.Uncate"></collection>
+    </resultMap>
+    <!--根据父id获取子节点-->
+    <select id="getAllUnTree" resultMap="unTree">
+        select * from tb_un where parent = "0"
+    </select>
+
+</mapper>

@@ -13,35 +13,60 @@
       <el-aside :width="isCollapse ?'64px' : '200px'">
         <div class="toggle-button" @click="toggleCollaps">|||</div>
         <!-- 侧边栏菜单区域 -->
+        <!--<el-menu-->
+          <!--background-color="#0090FD"-->
+          <!--text-color="#fff"-->
+          <!--active-text-color="#0C3571"-->
+          <!--:unique-opened="true"-->
+          <!--:collapse="isCollapse"-->
+          <!--:collapse-transition="false"-->
+          <!--router-->
+          <!--:default-active="activePath"-->
+        <!--&gt;-->
+          <!--&lt;!&ndash; 一级菜单 &ndash;&gt;-->
+          <!--<el-submenu :index="item.id + ''" :key="item.id" v-for="item in menulist">-->
+            <!--&lt;!&ndash; 一级菜单的模板区域 &ndash;&gt;-->
+            <!--<template slot="title">-->
+              <!--&lt;!&ndash; 图标 &ndash;&gt;-->
+              <!--<i style="font-size: 16px; color: #fff" :class="iconsObj[item.id]"></i>-->
+              <!--&lt;!&ndash; 文本 &ndash;&gt;-->
+              <!--<span>{{item.name}}</span>-->
+            <!--</template>-->
+            <!--&lt;!&ndash; 二级菜单 &ndash;&gt;-->
+            <!--<el-menu-item :index="'/'+subItem.path" :key="subItem.id" v-for="subItem in item.children" @click="saveNavState('/'+subItem.path)">-->
+              <!--<template slot="title">-->
+                <!--&lt;!&ndash; 图标 &ndash;&gt;-->
+                <!--<i class="el-icon-menu" style="color: #fff"></i>-->
+                <!--&lt;!&ndash; 文本 &ndash;&gt;-->
+                <!--<span>{{subItem.name}}</span>-->
+              <!--</template>-->
+            <!--</el-menu-item>-->
+          <!--</el-submenu>-->
+        <!--</el-menu>-->
         <el-menu
-          background-color="#383d48"
+          :default-active="activePath"
+          class="el-menu-admin"
+          router
+          mode="vertical"
+          background-color="#0090FD"
           text-color="#fff"
-          active-text-color="#409eff"
           :unique-opened="true"
           :collapse="isCollapse"
           :collapse-transition="false"
-          router
-          :default-active="activePath"
-        >
-          <!-- 一级菜单 -->
-          <el-submenu :index="item.id + ''" :key="item.id" v-for="item in menulist">
-            <!-- 一级菜单的模板区域 -->
-            <template slot="title">
-              <!-- 图标 -->
-              <i style="font-size: 16px" :class="iconsObj[item.id]"></i>
-              <!-- 文本 -->
-              <span>{{item.name}}</span>
-            </template>
-            <!-- 二级菜单 -->
-            <el-menu-item :index="'/'+subItem.path" :key="subItem.id" v-for="subItem in item.children" @click="saveNavState('/'+subItem.path)">
-              <template slot="title">
-                <!-- 图标 -->
-                <i class="el-icon-menu"></i>
-                <!-- 文本 -->
-                <span>{{subItem.name}}</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
+          active-text-color="#0C3571">
+          <template v-for="(item,i) in adminMenus">
+            <!--index 没有用但是必需字段且为 string -->
+            <el-submenu :key="i" :index="i + ''" style="text-align: left">
+          <span slot="title" >
+            <i :class="item.iconCls" style="font-size: 16px; color: #fff"></i>
+            {{item.nameZh}}
+          </span>
+              <el-menu-item v-for="child in item.children" :key="child.path" :index="child.path">
+                <i :class="child.icon" style="font-size: 16px; color: #fff"></i>
+                {{ child.nameZh }}
+              </el-menu-item>
+            </el-submenu>
+          </template>
         </el-menu>
       </el-aside>
       <!-- 右侧内容主体 -->
@@ -57,54 +82,79 @@
     data() {
       return {
         //左侧菜单数据
-        menulist:[
-          {name:'用户信息管理',
-           id:'125',
-           children:[
-             {name:'用户列表',
-               id:'110',
-               path:'users'}
-           ]
-          },
-          {name:'商品分类管理',
-            id:'101',
-            children:[
-              {name:'商品列表',
-                id:'110',
-                path:'goodslist'},
-              {name:'商品分类',
-                id:'110',
-                path:'goodscate'}
-            ]
-          },
-          {name:'分类标准信息管理',
-            id:'103',
-            children:[
-              {name:'信息列表',
-                id:'110',
-                path:'gpclist'}
-            ]
-          }
-        ],
-        iconsObj:{
-          "125":'iconfont icon-user',
-          "103":'iconfont icon-qukuai',
-          "101":'iconfont icon-cangpeitubiao_shangpin'
-        },
+        // menulist:[
+        //   {name:'用户信息管理',
+        //    id:'125',
+        //    children:[
+        //      {name:'用户列表',
+        //        id:'110',
+        //        path:'users'}
+        //    ]
+        //   },
+        //   {name:'商品分类管理',
+        //     id:'101',
+        //     children:[
+        //       {name:'商品列表',
+        //         id:'111',
+        //         path:'goodslist'},
+        //       // {name:'商品分类',
+        //       //   id:'112',
+        //       //   path:'goodscate'}
+        //     ]
+        //   },
+        //   {name:'分类标准信息管理',
+        //     id:'103',
+        //     children:[
+        //       {name:'分类映射查询表',
+        //         id:'113',
+        //         path:'gpclist'},
+        //       {
+        //         name:'GPC 分类 ',
+        //         id:'114',
+        //         path:'gpcate'
+        //       },
+        //       {
+        //         name:'UNSPSC 分类 ',
+        //         id:'115',
+        //         path:'uncate'
+        //       }
+        //     ]
+        //   }
+        // ],
+        // iconsObj:{
+        //   "125":'iconfont icon-user',
+        //   "103":'iconfont icon-qukuai',
+        //   "101":'iconfont icon-cangpeitubiao_shangpin'
+        // },
         isCollapse:false,
         //被激活的链接地址
         activePath:''
       }
     },
-    // created(){
-    //   this.getMenuList()
-    //   //在创建时就要取值
-    //   this.activePath = window.sessionStorage.getItem('activePath')
-    // },
+    computed:{
+      adminMenus(){
+        return this.$store.state.adminMenus
+      }
+    },
+    created(){
+      // this.getMenuList()
+      //在创建时就要取值
+      this.activePath = window.sessionStorage.getItem('activePath')
+    },
     methods: {
       logout() {
-        window.sessionStorage.clear();
-        this.$router.push("/login");
+        var _this = this
+        // window.sessionStorage.clear();
+        this.$axios.get('/logout').then(res => {
+          if(res.data.success == true){
+            _this.$store.commit('logout')
+            _this.$router.push("/");
+            _this.$store.state.adminMenus =[];
+          }
+          console.log(res)
+        }).catch(err =>{
+          console.log(err)
+        })
       },
       //获取所有菜单
       // async getMenuList(){
@@ -127,9 +177,10 @@
 </script>
 <style >
   .el-header {
-    background-color: #3d4344;
     display: flex;
+    background-color: #0090FD;
     height: 100px !important;
+    /*background-color: #5882FA;*/
     justify-content: space-between;
     padding-left: 0;
     align-items: center;
@@ -150,14 +201,18 @@
     width: 100%;
   }
   .el-aside {
-    background-color: #383d48;
-
+    /*background-color: #383d48;*/
+    /*background-color: #66B1FF;*/
+    /*background-color: #5882FA;*/
+    /*background-color: #2C85E0;*/
+    /*background-color: #6298EA;*/
+    background-color: #0090FD;
   }
   .el-aside .el-menu {
     border-right: none;
   }
   .el-main {
-    background-color: #d7dbde;
+    background-color: #F5F7FA;
   }
   body > .el-container {
     margin-bottom: 40px;
@@ -173,8 +228,10 @@
     margin-right: 10px;
   }
   .toggle-button {
-    background-color: #4A5064;
+    /*background-color: #4A5064;*/
+    /*background-color: #095CB1;*/
     color: white;
+    background-color: #3C75C9;
     text-align: center;
     font-size: 10px;
     line-height: 26px;

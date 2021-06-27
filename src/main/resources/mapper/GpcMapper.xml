@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.category.Mapper.GpcMapper">
+    <select id="queryGpcList" resultType="Gpcate">
+        select * from tb_gpc
+    </select>
+
+    <!--通过id检索-->
+    <select id="getGpcById" resultType="Gpcate">
+        select * from tb_gpc where id=#{id}
+    </select>
+
+    <!--取值-->
+    <select id="getGpcTree" resultMap="gpcTree">
+        select * from tb_gpc where parent=#{gpcnum}
+    </select>
+
+    <!--<select id="getGpcTre" resultMap="gpcTree">-->
+        <!--select * from tb_gpc where gpcnum=#{gpcnum}-->
+    <!--</select>-->
+
+    <!--模糊查询-->
+    <select id="selectGpc" resultMap="gpcTree">
+        select * from tb_gpc where 1=1 and gpcnum like "%"#{gpcnum}"%"
+    </select>
+
+    <!--更新-->
+    <update id="updateGpc" parameterType="Gpcate">
+        update tb_gpc set gpcname=#{gpcname},gpcnum=#{gpcnum},gpclevel=#{gpclevel},parent=#{parent} where id=#{id}
+    </update>
+
+    <!--删除-->
+    <update id="deleteGpc" parameterType="Integer">
+        update tb_gpc set deleted='1' where id=${id}
+    </update>
+
+    <!--添加-->
+    <insert id="addGpc" >
+        insert into tb_gpc(gpcname,gpcnum,parent,gpclevel) values (#{gpcname},#{gpcnum},#{parent},#{gpclevel})
+    </insert>
+
+    <resultMap id="gpcTree" type="com.example.category.Bean.Gpcate">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="gpcnum" property="gpcnum" jdbcType="VARCHAR" />
+        <result column="gpcname" property="gpcname" jdbcType="VARCHAR" />
+        <result column="gpclevel" property="gpclevel" jdbcType="INTEGER" />
+        <result column="parent" property="parent" jdbcType="VARCHAR" />
+        <result column="delete" property="delete" jdbcType="INTEGER" />
+        <!--id作为参数递归调用getDeptTree，查询子节点-->
+        <collection property="children" column="gpcnum" select="getGpcTree" ofType="com.example.category.Bean.Gpcate"></collection>
+    </resultMap>
+    <!--根据父id获取子节点-->
+    <select id="getAllGpcTree" resultMap="gpcTree">
+        select * from tb_gpc where parent = "0"
+    </select>
+
+</mapper>
